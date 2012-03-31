@@ -1,14 +1,11 @@
 <?php if(!defined("FRAMEWORK_LOADED")) exit('File access denied!');
 
-class Loader {
+class Router {
 	public function __construct() {
-		
-		
 		
 	}
 	
-	public function loadController($class) {
-		
+	public function get_class_name() {
 		
 		
 	}
