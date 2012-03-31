@@ -3,13 +3,9 @@
 class Loader {
 	public function __construct() {
 		
-		
-		
 	}
 	
 	public function loadController($class) {
-		
-		
 		
 	}
 }

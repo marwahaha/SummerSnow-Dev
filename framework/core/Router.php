@@ -7,6 +7,5 @@ class Router {
 	
 	public function get_class_name() {
 		
-		
 	}
 }
