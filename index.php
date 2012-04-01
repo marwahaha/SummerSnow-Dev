@@ -1,6 +1,8 @@
 <?php
 define(FRAMEWORK_LOADED, true);
+define(APPPATH, __DIR__);
+define(EXT, ".php");
 
-require_once("SummerSnow.php");
+require_once("framework/core/SummerSnow.php");
 
-new SummerSnow();
+$instance = SummerSnow::getInstance();
