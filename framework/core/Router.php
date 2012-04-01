@@ -8,7 +8,7 @@ class Router {
 	public function __construct($url) {
 		$this->url = $url;
 		$this->_parse_segments();
-		print_r($this->segments);
+		show_error("Test", 345, __FILE__, __LINE__, "go6o", "User");
 	}
 
 	public function get_class_name() {
