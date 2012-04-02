@@ -3,10 +3,14 @@
 class Loader {
 
 	public function load_controller($name) {
-		$this->load_class("controllers/" + $name);
+		$this->load_class("controllers/" . $name, $name);
 	}
 
-	public function load_class($class, $params = null) {
+	public function load_model($name) {
+		$this->load_class("models/" . $name, $name);
+	}
+
+	private function load_class($class, $object_name, $params = null) {
 		$class = str_replace(EXT, '', trim($class, '/'));
 
 		$subdir = '';
@@ -23,7 +27,6 @@ class Loader {
 
 				return $this->really_load_class($class, "", $params, $object_name);
 			}
-
 		}
 
 		if ($subdir == '') {
@@ -33,8 +36,8 @@ class Loader {
 	}
 
 
-	public function really_load_class($class, $prefix = '', $config = FALSE, $object_name = NULL) {
-		if ( ! class_exists($class)) {
+	private function really_load_class($class, $prefix = '', $config = FALSE, $object_name = NULL) {
+		if (!class_exists($class) || !class_exists($object_name)) {
 			die(show_error("Non-existent class: ".$class));
 		}
 

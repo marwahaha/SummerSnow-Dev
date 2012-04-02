@@ -7,10 +7,6 @@ set_error_handler(array("ErrorHandlerClass", "ErrorHandler"));
 class ErrorHandlerClass {
 
 	public static function show_error($message, $code = null, $file = null, $line = null, $errno = null, $type = null){
-		//$url = ((!empty($_SERVER['HTTPS'])) ? "https://" : "http://").$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
-
-		$firstLine = null;
-		
 		if(!is_null($file) && !is_null($line)) {
 			$firstLine = 'In file '.str_replace(APPPATH, '', $file).' at line '.$line;
 		} else if(!is_null($file) && is_null($line)) {
@@ -22,7 +18,7 @@ class ErrorHandlerClass {
 		echo '<div style="border: 1px solid #990000; padding: 5px 0 5px 20px; margin: 0 0 10px 0; text-align: left;">';
 		echo '<strong>A PHP Error was encountered</strong> <br />';
 		if(!is_null($message)) echo 'Message: '.$message.'<br />';
-		if(!is_null($firstLine)) echo $firstLine.'<br />';
+		if(isset($firstLine)) echo $firstLine.'<br />';
 		if(!is_null($type)) echo '<span style="padding-right:20px;">Type: '.$type.'</span>';
 		if(!is_null($errno)) echo '<span style="padding-right:20px;">Severity: '.$errno.'</span>';
 		if(!is_null($code)) echo 'Error code: '.$code;
@@ -41,7 +37,7 @@ class ErrorHandlerClass {
 		switch ($errno) {
 			case E_ERROR:
 				self::show_error($message, null, $file, $line, $errno, "Error");
-				exit(1); //wtf?
+				exit(1);
 				break;
 
 			case E_WARNING:
@@ -54,7 +50,7 @@ class ErrorHandlerClass {
 
 			default:
 				self::show_error($message, null, null, null, $errno, "Unidentified");
-				break;
+			break;
 		}
 		return true;
 	}
