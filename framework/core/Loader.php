@@ -1,12 +1,18 @@
 <?php if(!defined("FRAMEWORK_LOADED")) exit('File access denied!');
 
 class Loader {
+
 	public function controller($name, $populate_namespace) {
 		return $this->load_class("controllers/" . $name, $name, null, $populate_namespace);
 	}
 
 	public function model($name) {
 		$this->load_class("models/" . $name, $name);
+	}
+
+	public function view($name, $params) {
+		export($params);
+		include(APPPATH . "components/models/".$name.".php");
 	}
 
 	public function init_modules() {
