@@ -4,10 +4,13 @@ require_once("ErrorHandler.php");
 require_once("Loader.php");
 require_once("Router.php");
 
+require_once("Controller.php");
+
 class SummerSnow {
 
 	public static $instance;
-	public $router;
+	public $route;
+	public $load;
 
 	public static function getInstance() {
 		if (!self::$instance) {
@@ -20,17 +23,27 @@ class SummerSnow {
 
 	private function bootstrap() {
 		$url = isset($_GET['url']) ? $_GET['url'] : $_SERVER['REQUEST_URI'];
-		$this->router = new Router($url);
 
-		$loader = new Loader();
-		$class = $this->router->get_class_name();
-		$method = $this->router->get_method_name();
-		$loader->load_controller($class);
-		$this->$class->$method();
+		$this->route = new Router($url);
+		$this->load = new Loader();
+
+		$class = $this->route->get_class_name();
+		$method = $this->route->get_method_name();
+
+		$this->load->init_modules();
+
+		$controller = $this->load->controller($class, false);
+		
+		if($this->load->validate_method($class, $method)) {
+			$controller->$method();
+		} else {
+			show_error("404");
+		}
+
 	}
 
 }
 
-function get_instance() {
+function &get_instance() {
 	return SummerSnow::getInstance();
 }

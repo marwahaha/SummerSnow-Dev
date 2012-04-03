@@ -1,16 +1,40 @@
 <?php if(!defined("FRAMEWORK_LOADED")) exit('File access denied!');
 
 class Loader {
-
-	public function load_controller($name) {
-		$this->load_class("controllers/" . $name, $name);
+	public function controller($name, $populate_namespace) {
+		return $this->load_class("controllers/" . $name, $name, null, $populate_namespace);
 	}
 
-	public function load_model($name) {
+	public function model($name) {
 		$this->load_class("models/" . $name, $name);
 	}
 
-	private function load_class($class, $object_name, $params = null) {
+	public function init_modules() {
+		if ($handle = opendir(APPPATH . "framework/modules/")) {
+			while (false !== ($entry = readdir($handle))) {
+				if (end(explode(".", $entry)) == "php") {
+					$this->load_class(substr($entry, 0, strrpos($entry, '.')));
+				}
+			}
+			closedir($handle);
+		}
+	}
+
+	public function validate_method($class, $method) {
+		if(!class_exists($class)) return false;
+
+		$array1 = get_class_methods($class);
+		if($parent_class = get_parent_class($class)){
+			$array2 = get_class_methods($parent_class);
+			$array3 = array_diff($array1, $array2);
+		} else {
+			$array3 = $array1;
+		}
+
+		return in_array(strtolower($method), array_map('strtolower', $array3));
+	}
+
+	private function load_class($class, $object_name, $params = null, $populate_namespace = true) {
 		$class = str_replace(EXT, '', trim($class, '/'));
 
 		$subdir = '';
@@ -25,18 +49,18 @@ class Loader {
 			if (file_exists($subclass)) {
 				include_once($subclass);
 
-				return $this->really_load_class($class, "", $params, $object_name);
+				return $this->really_load_class($class, "", $params, $object_name, $populate_namespace);
 			}
 		}
 
 		if ($subdir == '') {
 			$path = strtolower($class).'/'.$class;
-			return $this->really_load_class($path, $params);
+			return $this->really_load_class($path, "", $params, null, $populate_namespace);
 		}
 	}
 
 
-	private function really_load_class($class, $prefix = '', $config = FALSE, $object_name = NULL) {
+	private function really_load_class($class, $prefix = '', $config = FALSE, $object_name = NULL, $populate_namespace = true) {
 		if (!class_exists($class) || !class_exists($object_name)) {
 			die(show_error("Non-existent class: ".$class));
 		}
@@ -49,11 +73,19 @@ class Loader {
 			$classvar = $object_name;
 		}
 
-		$ss =& get_instance();
-		if ($config !== NULL) {
-			$ss->$classvar = new $class($config);
+		if($populate_namespace) {
+			$ss =& get_instance();
+			if ($config !== NULL) {
+				$ss->$classvar = new $class($config);
+			} else {
+				$ss->$classvar = new $class;
+			}
 		} else {
-			$ss->$classvar = new $class;
+			if ($config !== NULL) {
+				return new $class($config);
+			} else {
+				return new $class;
+			}
 		}
 
 	}

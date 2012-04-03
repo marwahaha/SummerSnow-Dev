@@ -3,6 +3,7 @@
 error_reporting(E_ALL);
 set_exception_handler(array('ErrorHandlerClass', 'ExceptionHandler'));
 set_error_handler(array("ErrorHandlerClass", "ErrorHandler"));
+register_shutdown_function(array("ErrorHandlerClass", "handleShutdown"));
 
 class ErrorHandlerClass {
 
@@ -25,11 +26,18 @@ class ErrorHandlerClass {
 		echo '</div>';
 	}
 
-	function ExceptionHandler($e){
+	public static function ExceptionHandler($e){
 		self::show_error($e->getMessage(), $e->getCode(), $e->getLine(), $e->getFile());
 	}
 
-	function ErrorHandler($errno, $message, $file, $line) {
+	public static function handleShutdown() {
+		$error = error_get_last();
+		if($error !== NULL){
+			show_error($error['message'], null, $error['file'], $error['line'], null, "Shutdown Error");
+		}
+	}
+	
+	public static function ErrorHandler($errno, $message, $file, $line) {
 		if (!(error_reporting() & $errno)) {
 			return;
 		}
