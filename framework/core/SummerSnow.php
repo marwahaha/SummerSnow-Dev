@@ -24,16 +24,16 @@ class SummerSnow {
 	private function bootstrap() {
 		$url = isset($_GET['url']) ? $_GET['url'] : $_SERVER['REQUEST_URI'];
 
-		$this->route = new Router($url);
+		$this->route = new Router($url, $config['default_controller']);
 		$this->load = new Loader();
 
 		$class = $this->route->get_class_name();
 		$method = $this->route->get_method_name();
 
-		$this->load->init_modules();
+		$this->load->modules(array()); // TODO: autoload
 
 		$controller = $this->load->controller($class, false);
-		
+
 		if($this->load->validate_method($class, $method)) {
 			$controller->$method();
 		} else {

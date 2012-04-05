@@ -7,22 +7,30 @@ class Loader {
 	}
 
 	public function model($name) {
-		$this->load_class("models/" . $name, $name);
+		return $this->load_class("models/" . $name.".php", $name);
 	}
 
 	public function view($name, $params) {
 		export($params);
-		include(APPPATH . "components/models/".$name.".php");
+		return include(APPPATH . "components/models/".$name.".php");
 	}
 
-	public function init_modules() {
-		if ($handle = opendir(APPPATH . "framework/modules/")) {
-			while (false !== ($entry = readdir($handle))) {
-				if (end(explode(".", $entry)) == "php") {
-					$this->load_class(substr($entry, 0, strrpos($entry, '.')));
-				}
+	public function helper($name) {
+		return include(APPPATH . "components/helpers/".$name.".php");
+	}
+
+	public function module($module) {
+		return $this->modules(array($module));
+	}
+
+	public function modules($modules) { // TODO load framework->modules
+		foreach($modules as $module) {
+			if(file_exists(APPPATH . "components/modules/" . $module . "/" . $module . ".php")) {
+				$this->load_class("modules/" . $module . "/" . $module . ".php");
+				return true;
+			} else {
+				return false;
 			}
-			closedir($handle);
 		}
 	}
 
@@ -50,7 +58,7 @@ class Loader {
 		}
 
 		foreach (array(ucfirst($class), strtolower($class)) as $class) {
-			$subclass = APPPATH.'components/'.$subdir.$class.EXT;
+			$subclass = APPPATH.'components/'.$subdir.$class.EXT; // TODO
 
 			if (file_exists($subclass)) {
 				include_once($subclass);

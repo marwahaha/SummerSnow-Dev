@@ -2,12 +2,17 @@
 
 class Router {
 	public $url;
-	public $default_class = "test";
+	public $default_class;
 	public $segments;
 
-	public function __construct($url) {
+	public function __construct($url, $default_class) {
+		$this->default_class = $default_class;
 		$this->url = $url;
 		$this->_parse_segments();
+	}
+
+	public function segment($index) {
+		return isset($this->segments[$index]) ? $this->segments[$index] : false;
 	}
 
 	public function get_class_name() {
