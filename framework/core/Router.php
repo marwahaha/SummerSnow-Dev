@@ -37,7 +37,7 @@ class Router {
 		$permitted_chars = "a-z 0-9~%.:_\-";
 		if ($str != '') {
 			if (!preg_match("|^[".str_replace(array('\\-', '\-'), '-', preg_quote($permitted_chars, '-'))."]+$|i", $str)) {
-				die(show_error('The URI you submitted has disallowed characters.', 400));
+				die(show_error('The URI you submitted has disallowed characters.'));
 			}
 		}
 

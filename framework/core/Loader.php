@@ -3,35 +3,36 @@
 class Loader {
 
 	public function controller($name, $populate_namespace) {
-		return $this->load_class("controllers/" . $name, $name, null, $populate_namespace);
+		return $this->load_class("components/controllers/" . $name, $name, null, $populate_namespace);
 	}
 
-	public function model($name) {
-		return $this->load_class("models/" . $name.".php", $name);
+	public function model($model) {
+		return $this->models(array($model));
+	}
+
+	public function models($models) {
+		return $this->load_array($models, "models", "load_class");
 	}
 
 	public function view($name, $params) {
 		export($params);
-		return include(APPPATH . "components/models/".$name.".php");
+		return include(APPPATH . "components/models/" . $name . EXT);
 	}
 
-	public function helper($name) {
-		return include(APPPATH . "components/helpers/".$name.".php");
+	public function helper($helper) {
+		return $this->helpers(array($helper));
+	}
+
+	public function helpers($helpers) {
+		return $this->load_array($helpers, "helpers");
 	}
 
 	public function module($module) {
 		return $this->modules(array($module));
 	}
 
-	public function modules($modules) { // TODO load framework->modules
-		foreach($modules as $module) {
-			if(file_exists(APPPATH . "components/modules/" . $module . "/" . $module . ".php")) {
-				$this->load_class("modules/" . $module . "/" . $module . ".php");
-				return true;
-			} else {
-				return false;
-			}
-		}
+	public function modules($modules) {
+		return $this->load_array($modules, "modules", "load_class", true);
 	}
 
 	public function validate_method($class, $method) {
@@ -48,6 +49,34 @@ class Loader {
 		return in_array(strtolower($method), array_map('strtolower', $array3));
 	}
 
+	private function load_array($array, $component, $method = "include", $is_dir = false) {
+		$status = false;
+
+		foreach($array as $element) {
+			foreach(array("components/" . $component . "/", "framework/" . $component . "/") as $dir) {
+				if($method == "load_class") {
+					if(file_exists(APPPATH . $dir . ($is_dir ? $element . "/" : "") . $element . EXT)) {
+						$this->load_class($dir . ($is_dir ? $element . "/" : "") . $element . EXT);
+						$status = true;
+						break;
+					}
+
+				} else { // default: include
+
+					if(file_exists(APPPATH . $dir . $element . EXT)) {
+						include(APPPATH . $dir . $element . EXT);
+						$status = true;
+						break;
+					}
+				}
+			}
+		}
+
+		if(!$status) show_error("Could not load " . $dir . ($is_dir ? $element . "/" : "") . $element . EXT);
+			
+		return $status;
+	}
+
 	private function load_class($class, $object_name, $params = null, $populate_namespace = true) {
 		$class = str_replace(EXT, '', trim($class, '/'));
 
@@ -58,7 +87,7 @@ class Loader {
 		}
 
 		foreach (array(ucfirst($class), strtolower($class)) as $class) {
-			$subclass = APPPATH.'components/'.$subdir.$class.EXT; // TODO
+			$subclass = APPPATH . $subdir . $class . EXT;
 
 			if (file_exists($subclass)) {
 				include_once($subclass);
@@ -75,9 +104,7 @@ class Loader {
 
 
 	private function really_load_class($class, $prefix = '', $config = FALSE, $object_name = NULL, $populate_namespace = true) {
-		if (!class_exists($class) || !class_exists($object_name)) {
-			die(show_error("Non-existent class: ".$class));
-		}
+		if (!class_exists($class) || !class_exists($object_name)) show_error("Non-existent class: ".$class);
 
 		$class = strtolower($class);
 
