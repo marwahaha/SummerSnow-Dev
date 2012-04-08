@@ -1,9 +1,5 @@
 <?php
 
-function redirect() {
-	
-}
-
 function show_error($message) {
 	
 	Exceptions::show_error($message);
