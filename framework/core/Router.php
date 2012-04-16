@@ -4,14 +4,17 @@ class Router {
 	public $url;
 	public $default_class;
 	public $segments;
+	public $params;
 
 	public function __construct($url, $default_class) {
 		$this->default_class = $default_class;
 		$this->url = $url;
 		$this->_parse_segments();
+		$this->_populate_data();
 	}
 
 	public function segment($index) {
+		$index--;
 		return isset($this->segments[$index]) ? $this->segments[$index] : false;
 	}
 
@@ -29,6 +32,16 @@ class Router {
 
 			if ($val != '') {
 				$this->segments[] = $val;
+			}
+		}
+	}
+
+	private function _populate_data() {
+		if(count($this->segments) == 0) return;
+		$this->params = array();
+		foreach($this->segments as $segment) {
+			if(preg_match("/^(.+)\:(.+)$/", $segment, $out)) {
+				$this->params[$out[1]] = $out[2];
 			}
 		}
 	}

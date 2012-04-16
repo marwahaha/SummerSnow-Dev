@@ -6,7 +6,6 @@ define("EXT", ".php");
 require_once("framework/core/SummerSnow.php");
 
 $config['default_controller'] = "test";
-$config['autoload_modules'] = array("go6o", "to6o");
+$config['autoload_modules'] = array();
 
-SummerSnow::$config = $config;
 SummerSnow::getInstance();

@@ -50,13 +50,15 @@ class Loader {
 	}
 
 	private function load_array($array, $component, $method = "include", $is_dir = false) {
+		if(count($array) == 0) return true;
+
 		$status = false;
 
 		foreach($array as $element) {
 			foreach(array("components/" . $component . "/", "framework/" . $component . "/") as $dir) {
 				if($method == "load_class") {
 					if(file_exists(APPPATH . $dir . ($is_dir ? $element . "/" : "") . $element . EXT)) {
-						$this->load_class($dir . ($is_dir ? $element . "/" : "") . $element . EXT);
+						$this->load_class($dir . ($is_dir ? $element . "/" : "") . $element . EXT, $element);
 						$status = true;
 						break;
 					}
@@ -116,6 +118,7 @@ class Loader {
 
 		if($populate_namespace) {
 			$ss =& get_instance();
+			
 			if ($config !== NULL) {
 				$ss->$classvar = new $class($config);
 			} else {

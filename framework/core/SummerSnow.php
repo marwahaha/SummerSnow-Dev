@@ -9,9 +9,9 @@ require_once("Router.php");
 require_once("Controller.php");
 
 class SummerSnow {
-	
+
 	public static $instance;
-	public static $config;
+	public $config;
 	public $route;
 	public $load;
 
@@ -25,15 +25,17 @@ class SummerSnow {
 	}
 
 	private function bootstrap() {
+		$this->config =& $GLOBALS['config'];
+
 		$url = isset($_GET['url']) ? $_GET['url'] : $_SERVER['REQUEST_URI'];
 
-		$this->route = new Router($url, self::$config['default_controller']);
+		$this->route = new Router($url, $this->config['default_controller']);
 		$this->load = new Loader();
 
 		$class = $this->route->get_class_name();
 		$method = $this->route->get_method_name();
 
-		$this->load->modules(self::$config['autoload_modules']);
+		$this->load->modules($this->config['autoload_modules']);
 
 		$controller = $this->load->controller($class, false);
 
@@ -45,8 +47,4 @@ class SummerSnow {
 
 	}
 
-}
-
-function &get_instance() {
-	return SummerSnow::getInstance();
 }

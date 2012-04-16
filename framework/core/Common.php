@@ -1,5 +1,11 @@
 <?php
 
+function &get_instance() {
+	$instance =& SummerSnow::getInstance();
+	return $instance;
+}
+
+
 function show_error($message) {
 	
 	Exceptions::show_error($message);
