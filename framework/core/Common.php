@@ -21,6 +21,27 @@ function show_system_error($title, $heading, $message, $code) {
 	Exceptions::show_system_error($title, $heading, $message, $code);
 }
 
+function preg_error_to_text() {
+	if (preg_last_error() == PREG_NO_ERROR) {
+		return 'There is no error.';
+	}
+	else if (preg_last_error() == PREG_INTERNAL_ERROR) {
+		return 'There is an internal error!';
+	}
+	else if (preg_last_error() == PREG_BACKTRACK_LIMIT_ERROR) {
+		return 'Backtrack limit was exhausted!';
+	}
+	else if (preg_last_error() == PREG_RECURSION_LIMIT_ERROR) {
+		return 'Recursion limit was exhausted!';
+	}
+	else if (preg_last_error() == PREG_BAD_UTF8_ERROR) {
+		return 'Bad UTF8 error!';
+	}
+	else if (preg_last_error() == PREG_BAD_UTF8_ERROR) {
+		return 'Bad UTF8 offset error!';
+	}
+}
+
 function set_status_header($code = 200) {
 	$status = array(
 			200	=> 'OK',

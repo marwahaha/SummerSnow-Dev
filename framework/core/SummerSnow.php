@@ -29,7 +29,7 @@ class SummerSnow {
 
 		$url = isset($_GET['url']) ? $_GET['url'] : $_SERVER['REQUEST_URI'];
 
-		$this->route = new Router($url, $this->config['default_controller']);
+		$this->route = new Router($url, $this->config['default_controller'], $this->config['custom_routes']);
 		$this->load = new Loader();
 
 		$class = $this->route->get_class_name();

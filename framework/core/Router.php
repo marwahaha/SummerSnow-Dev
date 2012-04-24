@@ -1,14 +1,17 @@
 <?php if(!defined("FRAMEWORK_LOADED")) exit('File access denied!');
 
 class Router {
-	public $url;
 	public $default_class;
+	public $url;
+	public $custom_routes;
 	public $segments;
 	public $params;
 
-	public function __construct($url, $default_class) {
+	public function __construct($url, $default_class, $custom_routes) {
 		$this->default_class = $default_class;
 		$this->url = $url;
+		$this->custom_routes = $custom_routes;
+		$this->_handle_custom_routes();
 		$this->_parse_segments();
 		$this->_populate_data();
 	}
@@ -24,6 +27,18 @@ class Router {
 
 	public function get_method_name() {
 		return isset($this->segments[1]) ? $this->segments[1] : "index";
+	}
+
+	private function _handle_custom_routes() {
+		if(count($this->custom_routes) == 0) return;
+		foreach($this->custom_routes as $find_pattern=>$replace_pattern) {
+			$result = preg_replace("/" . $find_pattern . "/", $replace_pattern, $this->url);
+			if($result == null) {
+				show_error("Error at custom route " . $find_pattern . "<br />" . preg_error_to_text());
+			} else {
+				$this->url = $result;
+			}
+		}
 	}
 
 	private function _parse_segments() {
