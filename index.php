@@ -1,5 +1,6 @@
 <?php
 define("FRAMEWORK_LOADED", true);
+define("DS", DIRECTORY_SEPARATOR);
 define("APPPATH", str_replace("\\", "/", getcwd()) . "/");
 define("EXT", ".php");
 

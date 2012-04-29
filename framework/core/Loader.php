@@ -3,7 +3,7 @@
 class Loader {
 
 	public function controller($name, $populate_namespace) {
-		return $this->load_class("components/controllers/" . $name, $name, null, $populate_namespace);
+		return $this->load_class("components" . "/" . "controllers" . "/" . $name, $name, null, $populate_namespace);
 	}
 
 	public function model($model) {
@@ -16,7 +16,7 @@ class Loader {
 
 	public function view($name, $params) {
 		export($params);
-		return include(APPPATH . "components/models/" . $name . EXT);
+		return include(APPPATH . "components" . DS . "models" . DS . $name . EXT);
 	}
 
 	public function helper($helper) {
@@ -55,10 +55,10 @@ class Loader {
 		$status = false;
 
 		foreach($array as $element) {
-			foreach(array("components/" . $component . "/", "framework/" . $component . "/") as $dir) {
+			foreach(array("components" . DS . $component . DS, "framework" . DS . $component . DS) as $dir) {
 				if($method == "load_class") {
-					if(file_exists(APPPATH . $dir . ($is_dir ? $element . "/" : "") . $element . EXT)) {
-						$this->load_class($dir . ($is_dir ? $element . "/" : "") . $element . EXT, $element);
+					if(file_exists(APPPATH . $dir . ($is_dir ? $element . DS : "") . $element . EXT)) {
+						$this->load_class($dir . ($is_dir ? $element . DS : "") . $element . EXT, $element);
 						$status = true;
 						break;
 					}
@@ -118,7 +118,7 @@ class Loader {
 
 		if($populate_namespace) {
 			$ss =& get_instance();
-			
+				
 			if ($config !== NULL) {
 				$ss->$classvar = new $class($config);
 			} else {
