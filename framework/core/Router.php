@@ -20,7 +20,11 @@ class Router {
 		$index--;
 		return isset($this->segments[$index]) ? $this->segments[$index] : false;
 	}
-
+	
+	public function data($index) {
+		return isset($this->params[$index]) ? $this->params[$index] : false;
+	}
+	
 	public function get_class_name() {
 		return isset($this->segments[0]) ? $this->segments[0] : $this->default_class;
 	}
